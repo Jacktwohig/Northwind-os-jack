@@ -44,8 +44,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-sidebar-active text-white'
-                  : 'text-green-200/60 hover:bg-sidebar-hover hover:text-green-100'
+                  ? 'bg-sidebar-active text-white border border-white/10'
+                  : 'text-green-200/60 hover:bg-sidebar-hover hover:text-green-100 border border-white/5 hover:border-white/10'
               }`
             }
           >
