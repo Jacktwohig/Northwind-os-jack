@@ -82,7 +82,7 @@ export default function Triage() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="h-full flex flex-col overflow-hidden p-6 gap-4">
+      <div className="flex flex-col p-6 gap-4">
         {/* Header */}
         <div className="flex items-center justify-between flex-shrink-0">
           <div>
@@ -138,7 +138,7 @@ export default function Triage() {
         )}
 
         {/* Board */}
-        <div className="flex gap-3 flex-1 min-h-0">
+        <div className="flex gap-3 w-full items-start">
           {isStage
             ? STAGE_COLUMNS.map((col) => {
                 const cards = active.filter((i) => i.status === col.id)

@@ -26,7 +26,7 @@ export default function KanbanColumn({
   const { setNodeRef, isOver } = useDroppable({ id, disabled: !droppable })
 
   return (
-    <div className="flex flex-col flex-1 min-w-0 min-h-0">
+    <div className="flex flex-col flex-1 min-w-0">
       {/* Column header */}
       <div className={clsx('flex items-center justify-between px-3 py-2.5 rounded-t-xl border-b', headerColor)}>
         <div className="flex items-center gap-2">
@@ -42,7 +42,7 @@ export default function KanbanColumn({
       <div
         ref={setNodeRef}
         className={clsx(
-          'flex-1 overflow-y-auto scrollbar-thin p-2 space-y-2 rounded-b-xl transition-colors duration-150',
+          'flex-1 p-2 space-y-2 rounded-b-xl transition-colors duration-150',
           isOver ? 'bg-brand-50/70 ring-1 ring-brand-200' : 'bg-slate-50/60',
           droppable && 'min-h-[120px]',
         )}
