@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
-import { X, Mail, CheckCircle2, Trophy, XCircle, ExternalLink, Flame, Thermometer, Snowflake } from 'lucide-react'
+import { useEffect, useState, useRef } from 'react'
+import { X, Mail, CheckCircle2, Trophy, XCircle, ExternalLink, Flame, Thermometer, Snowflake, Sparkles, Copy, Check, Loader2 } from 'lucide-react'
+import { generateDraftReply } from '../lib/draftReply'
 import { clsx } from 'clsx'
 import type { ScoredInquiry } from '../types'
 import { useTriageContext } from '../store/TriageContext'
@@ -35,10 +36,19 @@ const TIER_ICONS = { hot: Flame, warm: Thermometer, cold: Snowflake }
 export default function InquiryPanel({ inquiry, onClose }: InquiryPanelProps) {
   const { updateStatus, markAsWon } = useTriageContext()
   const [wonConfirm, setWonConfirm] = useState(false)
+  const [draft, setDraft] = useState<string | null>(null)
+  const [draftLoading, setDraftLoading] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isOpen = inquiry !== null
 
-  // Reset confirmation state when inquiry changes
-  useEffect(() => { setWonConfirm(false) }, [inquiry?.id])
+  // Reset all local state when inquiry changes
+  useEffect(() => {
+    setWonConfirm(false)
+    setDraft(null)
+    setDraftLoading(false)
+    setCopied(false)
+  }, [inquiry?.id])
 
   // Close on ESC
   useEffect(() => {
@@ -48,6 +58,22 @@ export default function InquiryPanel({ inquiry, onClose }: InquiryPanelProps) {
   }, [onClose])
 
   if (!inquiry) return null
+
+  const handleDraft = async () => {
+    if (draft) { setDraft(null); return }
+    setDraftLoading(true)
+    const result = await generateDraftReply(inquiry)
+    setDraft(result)
+    setDraftLoading(false)
+  }
+
+  const handleCopy = () => {
+    if (!draft) return
+    navigator.clipboard.writeText(draft)
+    setCopied(true)
+    if (copyTimer.current) clearTimeout(copyTimer.current)
+    copyTimer.current = setTimeout(() => setCopied(false), 2000)
+  }
 
   const score = getTierScoreBreakdown(inquiry)
   const TierIcon = TIER_ICONS[inquiry.tier]
@@ -179,6 +205,56 @@ export default function InquiryPanel({ inquiry, onClose }: InquiryPanelProps) {
               <span className="text-xs text-slate-400">Total score</span>
               <span className="text-xs font-bold text-slate-700">{score.total} / 6</span>
             </div>
+          </div>
+
+          {/* AI draft reply */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">AI Draft Reply</p>
+              {draft && (
+                <button
+                  onClick={handleCopy}
+                  className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  {copied ? <Check size={11} className="text-brand-600" /> : <Copy size={11} />}
+                  {copied ? 'Copied' : 'Copy'}
+                </button>
+              )}
+            </div>
+
+            {!draft && !draftLoading && (
+              <button
+                onClick={handleDraft}
+                className="w-full flex items-center justify-center gap-2 border border-dashed border-slate-200 hover:border-brand-300 hover:bg-brand-50/50 text-slate-500 hover:text-brand-700 text-xs font-medium py-3 px-4 rounded-lg transition-all"
+              >
+                <Sparkles size={13} />
+                Generate draft outreach email
+              </button>
+            )}
+
+            {draftLoading && (
+              <div className="flex items-center justify-center gap-2 py-6 text-xs text-slate-400">
+                <Loader2 size={13} className="animate-spin" />
+                Drafting email…
+              </div>
+            )}
+
+            {draft && (
+              <div className="relative">
+                <textarea
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  rows={12}
+                  className="w-full text-xs text-slate-700 leading-relaxed bg-slate-50 border border-slate-200 rounded-lg p-3 resize-none focus:outline-none focus:ring-1 focus:ring-brand-300 focus:border-brand-300"
+                />
+                <button
+                  onClick={handleDraft}
+                  className="mt-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  ↺ Regenerate
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

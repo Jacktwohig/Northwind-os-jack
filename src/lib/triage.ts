@@ -85,8 +85,8 @@ export function isOverdue(inquiry: Inquiry): boolean {
 const TIER_ORDER: Record<Tier, number> = { hot: 0, warm: 1, cold: 2 }
 
 export function sortInquiries(
-  inquiries: (Inquiry & { tier: Tier; daysWaiting: number })[],
-): (Inquiry & { tier: Tier; daysWaiting: number })[] {
+  inquiries: (Inquiry & { tier: Tier; daysWaiting: number; isOverdue: boolean })[],
+): (Inquiry & { tier: Tier; daysWaiting: number; isOverdue: boolean })[] {
   const TERMINAL = new Set(['closed', 'won'])
   return [...inquiries].sort((a, b) => {
     // Won/Closed always last

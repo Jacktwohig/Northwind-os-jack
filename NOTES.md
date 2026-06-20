@@ -48,6 +48,24 @@ Overdue leads always surface first within any column (they represent revenue at 
 **Won account merge:**
 The browser has no writable backend, so won accounts are stored in localStorage and merged with the static accounts JSON at render time. The Dashboard's Active Accounts KPI and the Accounts table both update immediately when a deal is marked Won.
 
+## AI-assisted draft reply
+
+The inquiry side panel includes a "Generate draft outreach email" button. Clicking it produces a first-draft email pre-filled with the lead's name, cafe, requested volume, and a tone adapted to their urgency signal — something a sales rep can edit and send in 30 seconds.
+
+**Why it uses a mock response instead of a live API call:**
+The repo is public. Committing a real Anthropic API key to a public GitHub repo would expose it to anyone who finds the repository — they could use the key, run up charges, and the only remedy would be rotating the key after the fact. Rather than make the repo private (which adds friction for the evaluator) or require manual environment setup that could fail during review, the current implementation uses a mock generator that reads the actual inquiry data and produces a realistic, varied draft with a simulated delay. The feature is fully demonstrable without any setup.
+
+**How the real integration would work:**
+Wiring this to the actual Anthropic API is a straightforward swap. The mock function in `src/lib/draftReply.ts` is already structured as an async function that takes the inquiry object and returns a string — the same interface a real API call would use. To make it live:
+
+1. Add `VITE_ANTHROPIC_API_KEY` to a `.env` file (git-ignored) and document it in the README.
+2. Replace the mock body with a `fetch` call to `https://api.anthropic.com/v1/messages`, passing the API key in the `x-api-key` header and a prompt that includes the inquiry fields as context.
+3. Parse the response and return `content[0].text`.
+
+The prompt would look roughly like: *"You are a sales rep at Northwind Coffee, a specialty wholesale roaster. Draft a warm, concise outreach email to [contact_name] at [cafe_name]. They reached out via [channel] requesting [volume] lbs/month. Their message: [message]. Keep it under 150 words. End with a call to schedule a call."*
+
+The UI — loading state, editable textarea, copy button, regenerate — stays exactly as built. The only change is the data source inside `generateDraftReply`.
+
 ## How I'd extend this to production
 
 1. **Real data layer** — replace static JSON with a Supabase (or similar) backend. Inquiry status mutations persist server-side, enable multi-user sync, and support audit history.
