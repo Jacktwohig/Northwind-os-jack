@@ -13,7 +13,7 @@
 
 **Cut deliberately:**
 - Cost/margin analysis. The sales data only includes revenue, not COGS or cost-per-lb. Fabricating cost assumptions to show a profit number would be misleading — left it out entirely.
-- AI-drafted reply. Would have been a nice touch but the time was better spent on polish and the written deliverables.
+- Live AI API call. The draft reply feature uses a mock generator rather than a real Anthropic API call — the repo is public and committing a live key would expose it. The mock uses actual inquiry data to produce a realistic, varied draft. See the AI-assisted draft reply section for the exact steps to wire it live.
 - Full-text search. The filter tabs and Kanban columns cover the real triage use case. Search is a feature for a larger dataset.
 - Tests. Explicitly out of scope per the brief — and with mock data, test coverage would be testing the data, not logic.
 
