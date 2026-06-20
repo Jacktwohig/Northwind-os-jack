@@ -95,7 +95,10 @@ export function sortInquiries(
     // Then by tier
     const tierDiff = TIER_ORDER[a.tier] - TIER_ORDER[b.tier]
     if (tierDiff !== 0) return tierDiff
-    // Within tier, higher volume first
+    // Overdue leads float above non-overdue within the same tier
+    if (a.isOverdue && !b.isOverdue) return -1
+    if (b.isOverdue && !a.isOverdue) return 1
+    // Within same overdue bucket, higher volume first
     return b.requested_volume_lbs_month - a.requested_volume_lbs_month
   })
 }
