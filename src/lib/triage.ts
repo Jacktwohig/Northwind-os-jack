@@ -92,13 +92,13 @@ export function sortInquiries(
     // Won/Closed always last
     if (TERMINAL.has(a.status) && !TERMINAL.has(b.status)) return 1
     if (TERMINAL.has(b.status) && !TERMINAL.has(a.status)) return -1
+    // Overdue leads always float above non-overdue
+    if (a.isOverdue && !b.isOverdue) return -1
+    if (b.isOverdue && !a.isOverdue) return 1
     // Then by tier
     const tierDiff = TIER_ORDER[a.tier] - TIER_ORDER[b.tier]
     if (tierDiff !== 0) return tierDiff
-    // Overdue leads float above non-overdue within the same tier
-    if (a.isOverdue && !b.isOverdue) return -1
-    if (b.isOverdue && !a.isOverdue) return 1
-    // Within same overdue bucket, higher volume first
+    // Within same overdue+tier bucket, higher volume first
     return b.requested_volume_lbs_month - a.requested_volume_lbs_month
   })
 }
