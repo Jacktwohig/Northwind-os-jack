@@ -26,7 +26,7 @@ export default function Sidebar() {
   return (
     <aside className="w-56 flex-shrink-0 bg-sidebar h-screen flex flex-col overflow-hidden">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-5 border-b border-sidebar-border">
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-white/5">
         <NorthwindLogo />
         <div>
           <div className="text-white font-semibold text-sm leading-tight tracking-wide">Northwind</div>
@@ -72,7 +72,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-5 py-4 border-t border-sidebar-border">
+      <div className="px-5 py-4 border-t border-white/5">
         <div className="text-green-900/70 text-xs">Northwind OS · v1.0</div>
       </div>
     </aside>
