@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        sidebar: '#0f172a',
-        'sidebar-hover': '#1e293b',
+        sidebar: '#052e16',
+        'sidebar-hover': '#14532d',
         brand: {
           DEFAULT: '#16a34a',
           50: '#f0fdf4',
