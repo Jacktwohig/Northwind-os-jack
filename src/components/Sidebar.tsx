@@ -26,7 +26,7 @@ export default function Sidebar() {
   return (
     <aside className="w-56 flex-shrink-0 bg-sidebar h-screen flex flex-col overflow-hidden">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-800">
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-sidebar-border">
         <NorthwindLogo />
         <div>
           <div className="text-white font-semibold text-sm leading-tight tracking-wide">Northwind</div>
@@ -44,8 +44,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-slate-700/60 text-white'
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  ? 'bg-sidebar-active text-white'
+                  : 'text-green-200/60 hover:bg-sidebar-hover hover:text-green-100'
               }`
             }
           >
@@ -72,8 +72,8 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-5 py-4 border-t border-slate-800">
-        <div className="text-slate-600 text-xs">Northwind OS · v1.0</div>
+      <div className="px-5 py-4 border-t border-sidebar-border">
+        <div className="text-green-900/70 text-xs">Northwind OS · v1.0</div>
       </div>
     </aside>
   )
