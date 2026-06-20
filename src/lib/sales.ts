@@ -107,7 +107,7 @@ export function getAvgRevenuePerLb(): number {
 
 export function getPipelineValue() {
   const avgPerLb = getAvgRevenuePerLb()
-  const open = inquiries.filter((i) => i.status !== 'closed')
+  const open = inquiries.filter((i) => i.status !== 'closed' && i.status !== 'won')
   const qualified = open.filter((i) => i.status === 'qualified')
   const totalLbs = open.reduce((sum, i) => sum + i.requested_volume_lbs_month, 0)
   const qualifiedLbs = qualified.reduce((sum, i) => sum + i.requested_volume_lbs_month, 0)

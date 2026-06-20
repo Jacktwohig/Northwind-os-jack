@@ -86,3 +86,16 @@ Built entirely with Claude Code (Claude Sonnet 4.6) as the coding agent — I di
 5. **Iterated on polish** — refined spacing, color consistency (forest green brand system throughout), empty states, the scoring legend, drag-and-drop feel, and unified page scroll on the board.
 
 This is the exact workflow the role requires: orchestrate AI to ship internal tools fast, with quality, and with the judgment to know what matters and what to leave out.
+
+## Pre-submission audit
+
+Before submitting, a full audit of the codebase was run across all source files checking for unused code, potential bugs, and data accuracy issues. Findings and decisions:
+
+**Fixed:**
+- `src/lib/sales.ts` — `getPipelineValue()` was filtering out `'closed'` inquiries but not `'won'`. This meant won accounts were still being counted in the Open Inquiries KPI and Pipeline Volume card on the dashboard, inflating both numbers. Fixed by adding `'won'` to the exclusion filter.
+
+**Identified but deliberately left:**
+- `FilterTabs.tsx` and `InquiryRow.tsx` — components from an earlier list-view version of triage, no longer imported anywhere. Left in place rather than delete working code immediately before submission.
+- `formatDateShort()`, `getDaysBetween()`, `clamp()` in `src/lib/utils.ts` — exported utility functions nothing currently imports. No runtime impact; left in place.
+- `copyTimer` cleanup in `InquiryPanel.tsx` — minor React pattern improvement with no visible consequence in React 18. Not worth the risk of introducing a new issue the night before submission.
+- Empty array guard in `src/lib/sales.ts` — the sales data is a static import that can never be empty in this app. Defensive code would be adding protection for an unreachable scenario.
