@@ -13,15 +13,19 @@ import RegionChart from '../components/RegionChart'
 import ProductMixChart from '../components/ProductMixChart'
 import PipelineOpportunity from '../components/PipelineOpportunity'
 import AccountsTable from '../components/AccountsTable'
+import { useTriageContext } from '../store/TriageContext'
 
 const totalRevenue = getTotalRevenue()
 const trend = getRevenueTrend()
 const pipeline = getPipelineValue()
-const accounts = accountsRaw as Account[]
-const activeAccounts = accounts.filter((a) => a.status === 'active').length
-const pausedAccounts = accounts.filter((a) => a.status === 'paused').length
+const staticAccounts = accountsRaw as Account[]
+const staticActive = staticAccounts.filter((a) => a.status === 'active').length
+const staticPaused = staticAccounts.filter((a) => a.status === 'paused').length
 
 export default function Dashboard() {
+  const { wonAccounts } = useTriageContext()
+  const activeAccounts = staticActive + wonAccounts.length
+  const pausedAccounts = staticPaused
   return (
     <div className="p-8 max-w-7xl mx-auto">
       {/* Page header */}

@@ -8,7 +8,7 @@ export interface Inquiry {
   requested_volume_lbs_month: number
   message: string
   received_date: string
-  status: 'new' | 'contacted' | 'qualified' | 'closed'
+  status: 'new' | 'contacted' | 'qualified' | 'won' | 'closed'
 }
 
 export interface Account {
@@ -21,6 +21,16 @@ export interface Account {
 }
 
 export type Tier = 'hot' | 'warm' | 'cold'
+
+export interface WonAccount {
+  id: string
+  name: string
+  region: string
+  monthly_volume_lbs: number
+  customer_since: string
+  status: 'active'
+  fromInquiry: string
+}
 
 export interface ScoredInquiry extends Inquiry {
   tier: Tier

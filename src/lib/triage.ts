@@ -87,10 +87,11 @@ const TIER_ORDER: Record<Tier, number> = { hot: 0, warm: 1, cold: 2 }
 export function sortInquiries(
   inquiries: (Inquiry & { tier: Tier; daysWaiting: number })[],
 ): (Inquiry & { tier: Tier; daysWaiting: number })[] {
+  const TERMINAL = new Set(['closed', 'won'])
   return [...inquiries].sort((a, b) => {
-    // Closed always last
-    if (a.status === 'closed' && b.status !== 'closed') return 1
-    if (b.status === 'closed' && a.status !== 'closed') return -1
+    // Won/Closed always last
+    if (TERMINAL.has(a.status) && !TERMINAL.has(b.status)) return 1
+    if (TERMINAL.has(b.status) && !TERMINAL.has(a.status)) return -1
     // Then by tier
     const tierDiff = TIER_ORDER[a.tier] - TIER_ORDER[b.tier]
     if (tierDiff !== 0) return tierDiff

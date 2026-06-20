@@ -2,12 +2,8 @@ import accountsRaw from '../data/accounts.json'
 import type { Account } from '../types'
 import { formatDate, formatNumber } from '../lib/utils'
 import { clsx } from 'clsx'
-
-const accounts = (accountsRaw as Account[]).sort((a, b) => {
-  // Active first, then by volume desc
-  if (a.status !== b.status) return a.status === 'active' ? -1 : 1
-  return b.monthly_volume_lbs - a.monthly_volume_lbs
-})
+import { useTriageContext } from '../store/TriageContext'
+import { Trophy } from 'lucide-react'
 
 const REGION_DOT: Record<string, string> = {
   'Pacific Northwest': 'bg-sky-400',
@@ -17,9 +13,28 @@ const REGION_DOT: Record<string, string> = {
 }
 
 export default function AccountsTable() {
-  const active = accounts.filter((a) => a.status === 'active').length
-  const paused = accounts.filter((a) => a.status === 'paused').length
-  const totalVolume = accounts
+  const { wonAccounts } = useTriageContext()
+
+  // Merge static accounts with won accounts from triage
+  const staticAccounts = accountsRaw as Account[]
+  const wonAsAccounts: Account[] = wonAccounts.map((w) => ({
+    id: w.id,
+    name: w.name,
+    region: w.region,
+    monthly_volume_lbs: w.monthly_volume_lbs,
+    customer_since: w.customer_since,
+    status: 'active' as const,
+  }))
+
+  const all = [...staticAccounts, ...wonAsAccounts].sort((a, b) => {
+    if (a.status !== b.status) return a.status === 'active' ? -1 : 1
+    return b.monthly_volume_lbs - a.monthly_volume_lbs
+  })
+
+  const wonIds = new Set(wonAccounts.map((w) => w.id))
+  const active = all.filter((a) => a.status === 'active').length
+  const paused = all.filter((a) => a.status === 'paused').length
+  const totalVolume = all
     .filter((a) => a.status === 'active')
     .reduce((s, a) => s + a.monthly_volume_lbs, 0)
 
@@ -32,6 +47,12 @@ export default function AccountsTable() {
             {active} active · {paused} paused · {formatNumber(totalVolume)} lbs/mo active volume
           </div>
         </div>
+        {wonAccounts.length > 0 && (
+          <div className="flex items-center gap-1.5 text-xs text-brand-600 font-medium bg-brand-50 border border-brand-100 px-2.5 py-1 rounded-full">
+            <Trophy size={11} />
+            {wonAccounts.length} won from triage
+          </div>
+        )}
       </div>
 
       <div className="overflow-x-auto">
@@ -49,7 +70,7 @@ export default function AccountsTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {accounts.map((acct) => (
+            {all.map((acct) => (
               <tr
                 key={acct.id}
                 className={clsx(
@@ -57,7 +78,14 @@ export default function AccountsTable() {
                   acct.status === 'paused' && 'opacity-50',
                 )}
               >
-                <td className="px-5 py-3 font-medium text-slate-900">{acct.name}</td>
+                <td className="px-5 py-3 font-medium text-slate-900">
+                  <span className="flex items-center gap-2">
+                    {acct.name}
+                    {wonIds.has(acct.id) && (
+                      <Trophy size={11} className="text-brand-500 flex-shrink-0" />
+                    )}
+                  </span>
+                </td>
                 <td className="px-5 py-3">
                   <span className="flex items-center gap-1.5 text-slate-600">
                     <span

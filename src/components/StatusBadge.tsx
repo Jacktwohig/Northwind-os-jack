@@ -6,6 +6,7 @@ const CONFIG: Record<Inquiry['status'], { label: string; className: string }> = 
   contacted: { label: 'Contacted', className: 'bg-violet-50 text-violet-700 border border-violet-200' },
   qualified: { label: 'Qualified', className: 'bg-brand-50 text-brand-700 border border-brand-100' },
   closed: { label: 'Closed', className: 'bg-slate-100 text-slate-400 border border-slate-200' },
+  won: { label: 'Won', className: 'bg-brand-50 text-brand-700 border border-brand-200' },
 }
 
 export default function StatusBadge({ status }: { status: Inquiry['status'] }) {
