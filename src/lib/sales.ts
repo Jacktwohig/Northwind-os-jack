@@ -74,9 +74,13 @@ export function getWeeklyRevenue(): { week: string; fullDate: string; revenue: n
     }))
 }
 
-export function getRevenueByRegion(): { region: string; revenue: number }[] {
+export function getRevenueByRegion(days = 90): { region: string; revenue: number }[] {
+  const anchor = getAnchorDate()
+  const cutoff = new Date(anchor)
+  cutoff.setDate(cutoff.getDate() - days)
+
   const byRegion: Record<string, number> = {}
-  for (const s of sales) {
+  for (const s of sales.filter((s) => new Date(s.date + 'T00:00:00') > cutoff)) {
     byRegion[s.region] = (byRegion[s.region] ?? 0) + s.revenue
   }
   return Object.entries(byRegion)
@@ -84,9 +88,13 @@ export function getRevenueByRegion(): { region: string; revenue: number }[] {
     .map(([region, revenue]) => ({ region, revenue: Math.round(revenue) }))
 }
 
-export function getRevenueByProduct(): { product: string; revenue: number; pct: number }[] {
+export function getRevenueByProduct(days = 90): { product: string; revenue: number; pct: number }[] {
+  const anchor = getAnchorDate()
+  const cutoff = new Date(anchor)
+  cutoff.setDate(cutoff.getDate() - days)
+
   const byProduct: Record<string, number> = {}
-  for (const s of sales) {
+  for (const s of sales.filter((s) => new Date(s.date + 'T00:00:00') > cutoff)) {
     byProduct[s.product] = (byProduct[s.product] ?? 0) + s.revenue
   }
   const total = Object.values(byProduct).reduce((a, b) => a + b, 0)

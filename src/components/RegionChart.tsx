@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   ResponsiveContainer,
   BarChart,
@@ -11,14 +12,18 @@ import {
 import { getRevenueByRegion } from '../lib/sales'
 import { formatCurrency } from '../lib/utils'
 
-const data = getRevenueByRegion()
-
 const REGION_COLORS: Record<string, string> = {
   'Pacific Northwest': '#0ea5e9',
   'Bay Area': '#8b5cf6',
   'Mountain West': '#f59e0b',
   Southwest: '#ef4444',
 }
+
+const DATE_OPTIONS = [
+  { label: 'Last 30 days', days: 30 },
+  { label: 'Last 60 days', days: 60 },
+  { label: 'Last 90 days', days: 90 },
+]
 
 function CustomTooltip({ active, payload }: { active?: boolean; payload?: { value?: number; payload?: { region?: string } }[] }) {
   if (!active || !payload?.length) return null
@@ -33,11 +38,26 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: { valu
 }
 
 export default function RegionChart() {
+  const [days, setDays] = useState(90)
+  const data = getRevenueByRegion(days)
+  const selectedLabel = DATE_OPTIONS.find((o) => o.days === days)?.label ?? 'Last 90 days'
+
   return (
     <div className="bg-white rounded-xl p-5 shadow-card border border-slate-100">
-      <div className="mb-4">
-        <div className="text-sm font-semibold text-slate-900">Revenue by Region</div>
-        <div className="text-xs text-slate-400 mt-0.5">All 90 days</div>
+      <div className="flex items-start justify-between mb-4">
+        <div>
+          <div className="text-sm font-semibold text-slate-900">Revenue by Region</div>
+          <div className="text-xs text-slate-400 mt-0.5">{selectedLabel}</div>
+        </div>
+        <select
+          value={days}
+          onChange={(e) => setDays(Number(e.target.value))}
+          className="text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand-300 cursor-pointer"
+        >
+          {DATE_OPTIONS.map((o) => (
+            <option key={o.days} value={o.days}>{o.label}</option>
+          ))}
+        </select>
       </div>
 
       <ResponsiveContainer width="100%" height={200}>
